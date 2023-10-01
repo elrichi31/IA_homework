@@ -1,5 +1,5 @@
 
-def dijkstra(Grafo, salida, destino, heuristica):
+def a_star_search(Grafo, salida, destino, heuristica):
     # Inicializamos las distancias y los predecesores
     dist, prev = {}, {}
     result = []
@@ -97,7 +97,7 @@ inicio = 'Ellensburg'
 destino = 'Havre'
 
 
-s, distancia, previos = dijkstra(grafo, inicio, destino, heuristica)
+s, distancia, previos = a_star_search(grafo, inicio, destino, heuristica)
 ruta, distancias_ruta = ruta_mas_corta(previos, distancia, inicio, destino)
 
 # Imprimimos la ruta desde el inicio hasta el destino
