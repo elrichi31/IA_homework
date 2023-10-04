@@ -1,5 +1,5 @@
 from itertools import permutations
-
+import time
 def manhattan(config, objetivo):
     distancia = 0
     for idx, val in enumerate(config):
@@ -11,6 +11,7 @@ def manhattan(config, objetivo):
     return distancia
 
 def generar_configuraciones(numeros, objetivo, filename):
+    start_time = time.time()  # Guardar el tiempo de inicio
     configuraciones_unicas = set()  # Conjunto para almacenar configuraciones únicas
     
     with open(filename, 'w') as file:
@@ -19,6 +20,8 @@ def generar_configuraciones(numeros, objetivo, filename):
                 configuraciones_unicas.add(perm)
                 distancia = manhattan(perm, objetivo)
                 file.write(f"{list(perm)}, {distancia}\n")
+    end_time = time.time()  # Guardar el tiempo de finalización
+    print(f"Elapsed to generate DB: {end_time - start_time:.4f} seconds")
 
 # Para números 1-8 con estado objetivo [1,2,3,4,5,6,7,8,0]
 generar_configuraciones([1,2,3,4,5,6,7,8,0], [1,2,3,4,5,6,7,8,0], 'db_1_8.txt')
