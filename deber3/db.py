@@ -1,27 +1,36 @@
 from itertools import permutations
 import time
-def manhattan(config, objetivo):
-    distancia = 0
-    for idx, val in enumerate(config):
-        if val != 0:
-            correct_idx = objetivo.index(val)  # Encuentra la posición objetivo del valor actual
-            correct_row, correct_col = divmod(correct_idx, 3)
-            row, col = divmod(idx, 3)
-            distancia += abs(correct_row - row) + abs(correct_col - col)
-    return distancia
 
-def generar_configuraciones(numeros, objetivo, filename):
-    start_time = time.time()  # Guardar el tiempo de inicio
-    configuraciones_unicas = set()  # Conjunto para almacenar configuraciones únicas
+def calculate_pattern_cost(state, pattern, goal):
+    cost = 0
+    for piece in pattern:
+        if piece in state and piece != 0:
+            # Encontrar la posición de la pieza en el estado y el objetivo
+            piece_idx_state = state.index(piece)
+            piece_idx_goal = goal.index(piece)
+            
+            # Calcular y sumar la distancia de Manhattan para esta pieza
+            cost += abs(piece_idx_state // 3 - piece_idx_goal // 3) + abs(piece_idx_state % 3 - piece_idx_goal % 3)
+    return cost
+
+
+def generate_pattern_database(pattern, goal, filename):
+    start_time = time.time()
     
+    # Extraemos todas las permutaciones posibles del patrón y calculamos el costo
+    pdb_entries = []
+    for perm in set(permutations(pattern)):
+        cost = calculate_pattern_cost(perm, pattern, goal)
+        pdb_entries.append(f"{list(perm)}, {cost}\n")
+    
+    # Escribimos la PDB en un archivo
     with open(filename, 'w') as file:
-        for perm in set(permutations(numeros)):
-            if perm not in configuraciones_unicas:  # Verifica si la configuración ya fue procesada
-                configuraciones_unicas.add(perm)
-                distancia = manhattan(perm, objetivo)
-                file.write(f"{list(perm)}, {distancia}\n")
-    end_time = time.time()  # Guardar el tiempo de finalización
-    print(f"Elapsed to generate DB: {end_time - start_time:.4f} seconds")
+        file.writelines(pdb_entries)
+    
+    end_time = time.time()
+    print(f"Elapsed to generate PDB: {end_time - start_time:.4f} seconds")
 
-# Para números 1-8 con estado objetivo [1,2,3,4,5,6,7,8,0]
-generar_configuraciones([1,2,3,4,5,6,7,8,0], [1,2,3,4,5,6,7,8,0], 'db_1_8.txt')
+# Ejemplo de uso
+goal_state = [1,2,3,4,5,6,7,8,0]
+generate_pattern_database([1,2,3,4,0,0,0,0,0], goal_state, 'pdb_1_4.txt')
+generate_pattern_database([0,0,0,0,5,6,7,8,0], goal_state, 'pdb_5_8.txt')
