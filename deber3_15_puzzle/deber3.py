@@ -16,12 +16,31 @@ import math
 def pdb_heuristic(state, database_1_4, database_5_8):
     cost_1_4 = database_1_4.get(tuple([state[i] if state[i] <= 4 else 0 for i in range(9)]), 0)
     cost_5_8 = database_5_8.get(tuple([state[i] if state[i] >= 5 else 0 for i in range(9)]), 0)
+    #return max(cost_1_4, cost_5_8)
     return cost_1_4 + cost_5_8
+    #return min(cost_1_4, cost_5_8)
+    #return max(cost_1_4, cost_5_8) + min(cost_1_4, cost_5_8) * 0.5
+    #return max((0.65 * cost_1_4) + (0.35 * cost_5_8), (0.35 * cost_1_4) + (0.65 * cost_5_8))
+    #return ((0.6 * cost_1_4) + (0.4 * cost_5_8)) + ((0.4 * cost_1_4) + (0.6 * cost_5_8))
+    #return (cost_1_4 + cost_5_8) / 2
+    # if cost_1_4 > 20:  # Un umbral arbitrario que puedes ajustar
+    #     return cost_1_4
+    # else:
+    #     return cost_5_8
+
+    # if cost_1_4 == 0 or cost_5_8 == 0:
+    #     return max(cost_1_4, cost_5_8)
+    # return 2 * cost_1_4 * cost_5_8 / (cost_1_4 + cost_5_8) 
+
+
+
+
+
 
 
 from queue import PriorityQueue
-import time 
-import heapq
+import time  # Importar el módulo time
+import heapq  # Usaremos heapq en lugar de PriorityQueue para más control sobre la comparación de nodos
 
 class Puzzle:
     def __init__(self, state, parent, cost, heuristic_cost):
@@ -34,7 +53,7 @@ class Puzzle:
         return (self.cost + self.heuristic_cost) < (other.cost + other.heuristic_cost)
 def manhattan_distance(state, goal_state):
     distance = 0
-    for i in range(1, 9): 
+    for i in range(1, 9):  # 0 no es necesario ya que es el espacio vacío
         x1, y1 = divmod(state.index(i), 3)
         x2, y2 = divmod(goal_state.index(i), 3)
         distance += abs(x1-x2) + abs(y1-y2)
@@ -47,15 +66,16 @@ def a_star_manhattan(initial_state, goal_state):
     heapq.heappush(open_list, Puzzle(initial_state, None, 0, initial_heuristic))
     parents = {tuple(initial_state): Puzzle(initial_state, None, 0, initial_heuristic)}
 
-    iterations = 0 
-    max_depth = 0
-    expanded_nodes = 0
+    iterations = 0  # Contador de iteraciones
+    max_depth = 0  # Profundidad máxima alcanzada
+    expanded_nodes = 0  # Nodos expandidos
 
     while open_list:
         current_node = heapq.heappop(open_list)
         current_state = current_node.state
         iterations += 1
 
+        # Calcular la profundidad
         depth = 0
         node = current_node
         while node.parent:
@@ -72,7 +92,7 @@ def a_star_manhattan(initial_state, goal_state):
             print(f"Número de Nodos Expandidos: {expanded_nodes}")
             print(f"Profundidad Máxima del Árbol: {max_depth}")
             print(f"Nodos en la Frontera: {len(open_list)}")
-            return path[::-1], expanded_nodes
+            return path[::-1], expanded_nodes  # Retorna la solución y el número de nodos expandidos
         
         expanded_nodes += 1
 
@@ -93,7 +113,7 @@ def a_star_manhattan(initial_state, goal_state):
     print(f"Número de Nodos Expandidos: {expanded_nodes}")
     print(f"Profundidad Máxima del Árbol: {max_depth}")
     print(f"Nodos en la Frontera: {len(open_list)}")
-    return None, expanded_nodes
+    return None, expanded_nodes  # No hay solución y número de nodos expandidos
 
 
 # ---------------------------------------------------------------------------------------------
@@ -105,15 +125,16 @@ def a_star(initial_state, goal_state):
     heapq.heappush(open_list, Puzzle(initial_state, None, 0, initial_heuristic))
     parents = {tuple(initial_state): Puzzle(initial_state, None, 0, initial_heuristic)}
 
-    iterations = 0 
-    max_depth = 0 
-    expanded_nodes = 0
+    iterations = 0  # Contador de iteraciones
+    max_depth = 0  # Profundidad máxima alcanzada
+    expanded_nodes = 0  # Nodos expandidos
 
     while open_list:
         current_node = heapq.heappop(open_list)
         current_state = current_node.state
         iterations += 1
 
+        # Calcular la profundidad
         depth = 0
         node = current_node
         while node.parent:
@@ -130,7 +151,7 @@ def a_star(initial_state, goal_state):
             print(f"Número de Nodos Expandidos: {expanded_nodes}")
             print(f"Profundidad Máxima del Árbol: {max_depth}")
             print(f"Nodos en la Frontera: {len(open_list)}")
-            return path[::-1], expanded_nodes
+            return path[::-1], expanded_nodes  # Retorna la solución y el número de nodos expandidos
         
         expanded_nodes += 1
 
@@ -151,7 +172,7 @@ def a_star(initial_state, goal_state):
     print(f"Número de Nodos Expandidos: {expanded_nodes}")
     print(f"Profundidad Máxima del Árbol: {max_depth}")
     print(f"Nodos en la Frontera: {len(open_list)}")
-    return None, expanded_nodes
+    return None, expanded_nodes  # No hay solución y número de nodos expandidos
 
 
 def get_neighbors(state):
@@ -186,9 +207,9 @@ def check_solvability(state):
 
 def solve_puzzle_db(initial_state, goal_state_1):
     if check_solvability(initial_state):
-        start_time = time.time()
+        start_time = time.time()  # Guardar el tiempo de inicio
         path, expanded_nodes = a_star(initial_state, goal_state_1)
-        end_time = time.time()
+        end_time = time.time()  # Guardar el tiempo de finalización
         if path:
             print(path)
             print(f"Nodos expandidos: {expanded_nodes}")
