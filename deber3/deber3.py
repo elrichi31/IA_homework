@@ -10,15 +10,13 @@ def load_database(file_path):
 
 database_1_4 = load_database('pdb_1_4.txt')
 database_5_8 = load_database('pdb_5_8.txt')
-import math
-
 
 def pdb_heuristic(state, database_1_4, database_5_8):
     cost_1_4 = database_1_4.get(tuple([state[i] if state[i] <= 4 else 0 for i in range(9)]), 0)
     cost_5_8 = database_5_8.get(tuple([state[i] if state[i] >= 5 else 0 for i in range(9)]), 0)
     return cost_1_4 + cost_5_8
 
-
+ 
 from queue import PriorityQueue
 import time 
 import heapq
